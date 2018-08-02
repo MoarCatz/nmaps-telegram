@@ -9,9 +9,10 @@ def welcome(bot: Bot, update: Update) -> None:
     to_welcome, chat, message = False, 0, ''
 
     if update.effective_chat.id == nmaps_chat:
-        to_welcome = True
+        pass
+        '''to_welcome = True
         chat = nmaps_chat
-        message = BOT_WELCOME_NMAPS.format(user_name)
+        message = BOT_WELCOME_NMAPS.format(user_name)'''
     elif update.effective_chat.id == mods_chat:
         to_welcome = True
         chat = mods_chat
