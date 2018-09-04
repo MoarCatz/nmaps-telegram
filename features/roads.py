@@ -51,7 +51,8 @@ staff_keyboard, mods_keyboard, investigation_keyboard = \
 
 def new_roadblock(bot: Bot, update: Update) -> None:
     if banned(update.message.from_user) or \
-            update.effective_chat.id == roads_chat:
+            update.effective_chat.id == roads_chat or \
+            len(update.message.text) < 15:
         return
 
     user = bot.get_chat_member(mods_chat, update.effective_user.id)
