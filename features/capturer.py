@@ -48,7 +48,7 @@ class Capturer:
             self.check_url(url)
             self.drv.get(url)
             self.drv.refresh()
-            sleep(4)
+            sleep(5)
         except WebDriverException as e:
             print(e)
             self.reboot()

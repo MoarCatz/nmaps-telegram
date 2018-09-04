@@ -40,7 +40,7 @@ def cancel(_bot: Bot, update: Update, user_data: dict) -> int:
 
 
 def error(_bot: Bot, _update: Update, exc: Exception) -> None:
-    if exc == TimedOut:
+    if exc == TimedOut or exc == 'Invalid server response':
         return
     logger.error(exc)
 
