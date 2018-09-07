@@ -49,29 +49,27 @@ staff_keyboard, mods_keyboard, investigation_keyboard = \
     map(build_keyboard, (staff_buttons, mods_buttons, investigation_buttons))
 
 
-def new_roadblock(bot: Bot, update: Update) -> None:
-    if banned(update.message.from_user) or \
-            update.effective_chat.id == roads_chat or \
-            len(update.message.text) < 15:
+def new_roadblock(bot: Bot, message: Message) -> None:
+    if banned(message.from_user) or message.chat_id == roads_chat \
+            or spam(message):
         return
 
-    user = bot.get_chat_member(mods_chat, update.effective_user.id)
+    user = bot.get_chat_member(mods_chat, message.from_user.id)
     if user['status'] in ('creator', 'administrator', 'member'):
-        bypass_moderators(bot, update)
+        bypass_moderators(bot, message)
         return
 
-    update.message.reply_text(BOT_MSG_ACCEPT.format(
-        update.effective_user.name))
-    msg = BOT_REQUEST_CHECK.format(update.message.from_user.name)
+    message.reply_text(BOT_MSG_ACCEPT.format(message.from_user.name))
+    msg = BOT_REQUEST_CHECK.format(message.from_user.name)
     mods_message = bot.send_message(mods_chat,
                                     msg,
                                     reply_markup=mods_keyboard)
-    update.message.forward(mods_chat)
+    message.forward(mods_chat)
 
     with db_session:
-        Roadblock(author=update.effective_user.id,
-                  chat_id=update.effective_chat.id,
-                  chat_message_id=update.message.message_id,
+        Roadblock(author=message.from_user.id,
+                  chat_id=message.chat_id,
+                  chat_message_id=message.message_id,
                   mods_message_id=mods_message.message_id)
 
 
@@ -132,19 +130,17 @@ def accept_roadblock(bot: Bot, query: CallbackQuery) -> None:
             .roads_message_id = roads_message.message_id
 
 
-def bypass_moderators(bot: Bot, update: Update) -> None:
-    update.message.reply_text(
-        BOT_MSG_ACCEPT.format(update.message.from_user.name,
-                              update.message.from_user.id))
-    bot.forward_message(roads_chat, update.message.chat.id,
-                        update.message.message_id)
+def bypass_moderators(bot: Bot, message: Message) -> None:
+    message.reply_text(BOT_MSG_ACCEPT.format(message.from_user.name,
+                                             message.from_user.id))
+    bot.forward_message(roads_chat, message.chat_id, message.message_id)
     roads_message = bot.send_message(roads_chat, BOT_NEW_ROADBLOCK,
                                      reply_markup=staff_keyboard)
 
     with db_session:
-        Roadblock(author=update.effective_user.id,
-                  chat_id=update.effective_chat.id,
-                  chat_message_id=update.message.message_id,
+        Roadblock(author=message.from_user.id,
+                  chat_id=message.chat_id,
+                  chat_message_id=message.message_id,
                   roads_message_id=roads_message.message_id)
 
 
@@ -197,3 +193,9 @@ def roadblock_callback(bot: Bot, update: Update) -> None:
 @db_session
 def banned(user: User) -> bool:
     return Banned.exists(user_id=user.id)
+
+
+def spam(message: Message) -> bool:
+    return (message.text and len(message.text) < 15 or
+            message.caption and len(message.caption) < 15) \
+           and not message.reply_to_message

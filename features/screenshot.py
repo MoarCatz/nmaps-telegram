@@ -1,5 +1,5 @@
 from cloudinary.uploader import upload
-from telegram import Bot, Update, ChatAction
+from telegram import Bot, Message, ChatAction
 
 from features.capturer import Capturer, IllegalURL
 from phrases import BOT_ILLEGAL_URL
@@ -7,18 +7,15 @@ from phrases import BOT_ILLEGAL_URL
 cpt = Capturer()
 
 
-def screenshot(bot: Bot, update: Update) -> None:
-    for entity in update.message['entities']:
-        if entity['type'] == 'url':
-            url_start = int(entity['offset'])
-            url_end = url_start + int(entity['length'])
+def screenshot(bot: Bot, message: Message) -> None:
+    for entity in message.parse_entities():
+        if entity.type == 'url':
+            url = message.parse_entity(entity)
             try:
-                bot.send_chat_action(update.effective_chat.id,
+                bot.send_chat_action(message.chat_id,
                                      ChatAction.UPLOAD_PHOTO)
-                scrn = cpt.take_screenshot(
-                    update.message.text[url_start:url_end]
-                )
+                scrn = cpt.take_screenshot(url)
                 scrn_url = upload(scrn)['secure_url']
-                bot.send_photo(update.message.chat.id, scrn_url)
+                bot.send_photo(message.chat_id, scrn_url)
             except IllegalURL:
-                update.message.reply_text(BOT_ILLEGAL_URL)
+                message.reply_text(BOT_ILLEGAL_URL)

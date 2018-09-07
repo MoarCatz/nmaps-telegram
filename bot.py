@@ -8,10 +8,10 @@ from telegram.ext import Updater, MessageHandler, RegexHandler, Filters, \
 from config import *
 from features.bookmarks import bookmarks
 from features.feedback import request_feedback, receive_feedback
+from features.hashtag import hashtag
 from features.inline import inline_search
-from features.roads import new_roadblock, roadblock_callback, roadblock_filter
+from features.roads import roadblock_callback
 from features.rss import rss
-from features.screenshot import screenshot
 from features.search import search, run_search
 from features.subscription import update_subscription, subscribed
 from features.transliterator import transliterate, retrieve_transliteration
@@ -20,7 +20,6 @@ from features.wrappers import private
 from helpers import get_keyboard
 from phrases import *
 from start import send_instructions
-
 
 # Enable logging
 logging.basicConfig(format='[%(asctime)s] [%(levelname)s] [bot]\n%(message)s',
@@ -67,10 +66,9 @@ def main():
     dp.add_handler(RegexHandler(r'(/start[a-z-]*|{})'.format(MENU_ROADS),
                                 send_instructions))
     dp.add_handler(RegexHandler(MENU_LINKS, bookmarks))
-    dp.add_handler(RegexHandler(screen_hashtags, screenshot))
-    dp.add_handler(RegexHandler(road_hashtag, new_roadblock))
-    dp.add_handler(MessageHandler(Filters.photo & roadblock_filter,
-                                  new_roadblock))
+    dp.add_handler(MessageHandler((Filters.entity('hashtag') |
+                                   Filters.caption_entity('hashtag')),
+                                  hashtag))
     dp.add_handler(RegexHandler(r'({}|{})'.format(MENU_SUBSCRIBE,
                                                   MENU_UNSUBSCRIBE),
                                 update_subscription))
