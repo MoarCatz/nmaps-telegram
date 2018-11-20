@@ -7,6 +7,7 @@ from telegram.ext import Updater, MessageHandler, RegexHandler, Filters, \
 
 from config import *
 from features.bookmarks import bookmarks
+from features.devmode import enable_dev
 from features.feedback import request_feedback, receive_feedback
 from features.hashtag import hashtag
 from features.inline import inline_search
@@ -123,7 +124,8 @@ def main():
     dp.add_error_handler(error)
 
     # Adds repeating jobs
-    jobs.run_repeating(rss, 300)
+    if not enable_dev():
+        jobs.run_repeating(rss, 300)
 
     # Inline handler
     dp.add_handler(InlineQueryHandler(inline_search))
