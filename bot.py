@@ -16,7 +16,7 @@ from features.rss import rss
 from features.search import search, run_search
 from features.subscription import update_subscription, subscribed
 from features.transliterator import transliterate, retrieve_transliteration
-from features.welcome import welcome
+from features.welcome import welcome, verify_user
 from features.wrappers import private
 from helpers import get_keyboard
 from phrases import *
@@ -62,7 +62,7 @@ def main():
 
     # Welcome
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members,
-                                  welcome))
+                                  welcome, pass_job_queue=True))
 
     dp.add_handler(RegexHandler(r'(/start[a-z-]*|{})'.format(MENU_ROADS),
                                 send_instructions))
@@ -116,6 +116,9 @@ def main():
     # Callbacks
     dp.add_handler(CallbackQueryHandler(roadblock_callback,
                                         pattern=r'^road\w+'))
+    dp.add_handler(CallbackQueryHandler(verify_user,
+                                        pattern=r'not_bot',
+                                        pass_job_queue=True))
 
     # This one will handle any random message
     dp.add_handler(MessageHandler(Filters.all, send_instructions))
