@@ -1,7 +1,7 @@
 from telegram import Bot, Update
 
 from config import nmaps_chat, mods_chat, roads_chat, english_chat
-from phrases import BOT_WELCOME_NMAPS, BOT_WELCOME_MODS, BOT_WELCOME_ROADS, BOT_WELCOME_ENG
+from phrases import BOT_WELCOME_MODS, BOT_WELCOME_ROADS, BOT_WELCOME_ENG
 
 
 def welcome(bot: Bot, update: Update) -> None:
@@ -9,10 +9,8 @@ def welcome(bot: Bot, update: Update) -> None:
     to_welcome, chat, message = False, 0, ''
 
     if update.effective_chat.id == nmaps_chat:
-        pass
-        '''to_welcome = True
-        chat = nmaps_chat
-        message = BOT_WELCOME_NMAPS.format(user_name)'''
+        bot.delete_message(update.effective_chat.id,
+                           update.effective_message.message_id)
     elif update.effective_chat.id == mods_chat:
         to_welcome = True
         chat = mods_chat
