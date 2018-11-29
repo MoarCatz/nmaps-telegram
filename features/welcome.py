@@ -64,7 +64,10 @@ def verify_user(bot: Bot, update: Update, job_queue: JobQueue):
         bot.delete_message(data['chat_id'], data['msg_id'])
         bot.restrict_chat_member(data['chat_id'],
                                  data['user_id'],
-                                 can_send_messages=True)
+                                 can_send_messages=True,
+                                 can_add_web_page_previews=True,
+                                 can_send_media_messages=True,
+                                 can_send_other_messages=True)
         bot.answer_callback_query(update.callback_query.id,
                                   text=BOT_VERIFIED)
 
