@@ -51,11 +51,11 @@ def retrieve_search_results(update: Update, in_rules: bool) -> None:
 
     if in_rules:
         for item in soup.find_all('div', class_='results__item'):
-            if item.find_all('div')[1].text != 'Народная карта':
+            if not item.attrs['data-document'].startswith('/support/nmaps/'):
                 continue
-            title = item.find('div').text.replace('&nbsp;', ' ')
-            link = 'https://yandex.ru/support/' + item.attrs['data-document']
-            text = item.find_all('div')[2].text
+            title = item.find('div', class_='results__title').text
+            link = 'https://yandex.ru' + item.attrs['data-document']
+            text = item.find('div', class_='results__text').text
             answer += '[' + title + '](' + link + ')\n```' \
                       + text + '```\n____________________\n'
     else:

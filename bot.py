@@ -7,7 +7,7 @@ from telegram.ext import Updater, MessageHandler, RegexHandler, Filters, \
 
 from config import *
 from features.bookmarks import bookmarks
-from features.devmode import enable_dev
+from features.devmode import enable_dev, get_headers
 from features.feedback import request_feedback, receive_feedback
 from features.hashtag import hashtag
 from features.inline import inline_search
@@ -52,7 +52,7 @@ def typing(bot: Bot, update: Update) -> None:
 
 def main():
     """Start the bot"""
-    updater = Updater(telegram_key)
+    updater = Updater(telegram_key, request_kwargs=get_headers())
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
     jobs = updater.job_queue
