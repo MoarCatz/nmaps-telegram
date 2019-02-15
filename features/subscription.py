@@ -3,23 +3,38 @@ from helpers import get_keyboard
 from telegram import Bot, Update
 
 from pony.orm import db_session
-from db import Subscriber
+from db import Chat, User
 
 
 @db_session
 def update_subscription(_bot: Bot, update: Update) -> None:
     user_id = update.effective_user.id
 
-    if not subscribed(user_id):
-        Subscriber(user_id=user_id)
+    if not User.get(user_id=user_id).is_subscribed():
+        subscribe_user(user_id)
         update.message.reply_text(BOT_SUBSCRIBED_USR,
-                                  reply_markup=get_keyboard(update, True))
+                                  reply_markup=get_keyboard(update))
     else:
-        Subscriber.get(user_id=user_id).delete()
+        unsubscribe_user(user_id)
         update.message.reply_text(BOT_UNSUBSCRIBED_USR,
-                                  reply_markup=get_keyboard(update, False))
+                                  reply_markup=get_keyboard(update))
 
 
 @db_session
-def subscribed(id: int) -> bool:
-    return Subscriber.exists(user_id=id)
+def subscribe_user(user_id: int) -> None:
+    User.get(user_id=user_id).subscribed = True
+
+
+@db_session
+def unsubscribe_user(user_id: int) -> None:
+    User.get(user_id=user_id).subscribed = False
+
+
+@db_session
+def subscribe_chat(chat_id: int) -> None:
+    Chat.get(chat_id=chat_id).subscribed = True
+
+
+@db_session
+def unsubscribe_chat(chat_id: int) -> None:
+    Chat.get(chat_id=chat_id).subscribed = False

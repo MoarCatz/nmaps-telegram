@@ -30,6 +30,9 @@ main_menu = [[MENU_LINKS],
              [MENU_SEARCH_CLUB, MENU_SEARCH_RULES],
              [MENU_ROADS, MENU_FEEDBACK]]
 
+admin_menu = [[MENU_CHATS],
+              [MENU_RETURN]]
+
 nmaps_chat = int(os.getenv('NMAPSCHAT', '-1001136617457'))
 mods_chat = int(os.getenv('MODSCHAT', '-1001304260305'))
 roads_chat = int(os.getenv('ROADSCHAT', '-259382209'))

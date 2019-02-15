@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from telegram import Bot, Update, ReplyKeyboardMarkup
 from telegram.ext import ConversationHandler
 
-from start import send_instructions
+from features.start import send_instructions
 from features.wrappers import private
 from config import SEARCH_QUERY_REQUESTED, rules_search_url, club_search_url
 from phrases import MENU_SEARCH_RULES, BOT_SRCH_QUERY, MENU_RETURN, \

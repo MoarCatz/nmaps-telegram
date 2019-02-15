@@ -1,13 +1,10 @@
 from telegram import Bot, Update
 
-from features.subscription import subscribed
-from features.wrappers import private
 from helpers import get_keyboard
 from phrases import MENU_ROADS, BOT_PRIVATE_ROAD_REPORT_USR, \
     BOT_INLINE_INSTRUCTIONS, BOT_ACTION_SELECT, BOT_UNRECOGNIZED_MESSAGE
 
 
-@private
 def send_instructions(_bot: Bot, update: Update, start=False) -> None:
     instructions = {MENU_ROADS: BOT_PRIVATE_ROAD_REPORT_USR,
                     '/start inline-help': BOT_INLINE_INSTRUCTIONS,
@@ -20,5 +17,4 @@ def send_instructions(_bot: Bot, update: Update, start=False) -> None:
         text = BOT_UNRECOGNIZED_MESSAGE
     update.message.reply_markdown(
         text,
-        reply_markup=get_keyboard(update,
-                                  subscribed(update.message.from_user.id)))
+        reply_markup=get_keyboard(update))

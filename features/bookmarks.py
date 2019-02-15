@@ -1,6 +1,6 @@
 from telegram import Bot, Update, InlineKeyboardButton, InlineKeyboardMarkup
 
-from start import send_instructions
+from features.start import send_instructions
 from features.wrappers import private
 from phrases import STREET_TRANSLITERATOR, BOT_CHS_LINK
 

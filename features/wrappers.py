@@ -1,8 +1,9 @@
 from functools import wraps
 
+from pony.orm import db_session
 from telegram.ext import Filters
 
-from config import admins
+from db import User
 
 
 def private(f):
@@ -16,6 +17,7 @@ def private(f):
 def admins_only(f):
     @wraps(f)
     def wrapped_admins(bot, update, *args, **kwargs):
-        if update.message.from_user.id in admins:
-            return f(bot, update, *args, **kwargs)
+        with db_session:
+            if User.get(user_id=update.effective_user.id).is_admin():
+                return f(bot, update, *args, **kwargs)
     return wrapped_admins

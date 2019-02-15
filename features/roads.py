@@ -6,7 +6,7 @@ from config import mods_chat, roads_chat, roads_staff, road_hashtag
 from phrases import *
 
 from pony.orm import db_session
-from db import Banned, Roadblock
+from db import Roadblock, User as U
 
 
 class RoadblockHashtagHandler(BaseFilter):
@@ -54,7 +54,10 @@ def new_roadblock(bot: Bot, message: Message) -> None:
             or spam(message):
         return
 
-    user = bot.get_chat_member(mods_chat, message.from_user.id)
+    user_id = message.from_user.id
+    with db_session:
+        U.get(user_id=user_id).roadblocks_count += 1
+    user = bot.get_chat_member(mods_chat, user_id)
     if user['status'] in ('creator', 'administrator', 'member'):
         bypass_moderators(bot, message)
         return
@@ -100,7 +103,7 @@ def ban_roadblock_author(_bot: Bot, query: CallbackQuery) -> None:
         query.from_user.id),
                             parse_mode='markdown')
     with db_session:
-        Banned(user_id=nmaps_message.author)
+        U.get(user_id=nmaps_message.author).is_banned = True
 
 
 def request_roadblock_info(_bot: Bot, query: CallbackQuery) -> None:
@@ -192,7 +195,7 @@ def roadblock_callback(bot: Bot, update: Update) -> None:
 
 @db_session
 def banned(user: User) -> bool:
-    return Banned.exists(user_id=user.id)
+    return U.get(user_id=user.id).is_banned()
 
 
 def spam(message: Message) -> bool:

@@ -1,12 +1,11 @@
 from telegram import Bot, Update, ReplyKeyboardMarkup
 from telegram.ext import ConversationHandler
 
-from features.wrappers import private
 from config import FEEDBACK_REQUESTED, alexfox
+from features.wrappers import private
 from helpers import get_keyboard
 from phrases import BOT_SEND_FEEDBACK_USR, MENU_RETURN, \
     BOT_FEEDBACK_SENT_USR, BOT_DELIVER_FEEDBACK
-from features.subscription import subscribed
 
 
 @private
@@ -22,8 +21,7 @@ def request_feedback(_bot: Bot, update: Update) -> int:
 def receive_feedback(bot: Bot, update: Update) -> int:
     update.message.reply_text(
         BOT_FEEDBACK_SENT_USR,
-        reply_markup=get_keyboard(update,
-                                  subscribed(update.effective_user.id)))
+        reply_markup=get_keyboard(update))
     bot.send_message(alexfox,
                      BOT_DELIVER_FEEDBACK.format(update.effective_user.name,
                                                  update.message.text),

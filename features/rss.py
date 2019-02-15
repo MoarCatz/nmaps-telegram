@@ -1,15 +1,15 @@
-from telegram.error import TelegramError
-from telegram import Bot
-from itertools import chain
-from calendar import timegm
-from config import nmaps_chat, mods_chat, instantview_url
-from phrases import BOT_NEW_RSS
-import feedparser
 import logging
+from calendar import timegm
+from itertools import chain
 
+import feedparser
 from pony.orm import db_session
-from db import Rss, Subscriber
+from telegram import Bot
+from telegram.error import TelegramError
 
+from config import instantview_url
+from db import Chat, Rss, User
+from phrases import BOT_NEW_RSS
 
 log_level = logging.INFO
 
@@ -38,11 +38,11 @@ def rss(bot: Bot, _job) -> None:
     log.info('Wrote latest timestamp to database: {}'.format(new_latest_date))
 
     if new_entries:
-        subscribers = get_subscribers()
+        recipients = tuple(chain(get_subscribers(), get_subscribed_chats()))
         log.info('Fetched subscribers')
         log.info('Sending new posts')
         for entry in list(reversed(new_entries)):
-            send_post(bot, entry, subscribers)
+            send_post(bot, entry, recipients)
         log.info('Done sending posts!')
     else:
         log.info('No new posts')
@@ -60,7 +60,8 @@ def get_new_entries() -> tuple:
 
     new_entries = []
     i = 0
-    while timegm(entries[i].published_parsed) > last_published:
+    while timegm(entries[i].published_parsed) > last_published and \
+            i < len(entries) - 1:
         if timegm(entries[i].published_parsed) > new_latest_date:
             new_latest_date = timegm(entries[i].published_parsed)
         log.info('New entry: {}'.format(entries[i].link))
@@ -70,16 +71,21 @@ def get_new_entries() -> tuple:
     return new_entries, new_latest_date
 
 
-def send_post(bot: Bot, url: str, subscribers: list) -> None:
+def send_post(bot: Bot, url: str, recipients: tuple) -> None:
     log.info('Sending post: {}'.format(url))
     message_text = BOT_NEW_RSS.format(instantview_url.format(url), url)
-    for subscriber in chain((nmaps_chat, mods_chat), subscribers):
+    for recipient in recipients:
         try:
-            bot.send_message(subscriber, message_text, parse_mode='markdown')
+            bot.send_message(recipient, message_text, parse_mode='markdown')
         except TelegramError:
             pass
 
 
 @db_session
 def get_subscribers() -> list:
-    return [s.user_id for s in Subscriber.select(lambda s: s.user_id)]
+    return [u.user_id for u in User.select(lambda s: s.is_subscribed())]
+
+
+@db_session
+def get_subscribed_chats() -> list:
+    return [c.chat_id for c in Chat.select(lambda s: s.is_subscribed())]

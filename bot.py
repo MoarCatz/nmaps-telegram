@@ -6,7 +6,10 @@ from telegram.ext import Updater, MessageHandler, RegexHandler, Filters, \
     InlineQueryHandler, ConversationHandler, CallbackQueryHandler
 
 from config import *
+from features.admin import (admin_menu, chats_management, change_chats_page,
+                            update_chat_subscription)
 from features.bookmarks import bookmarks
+from features.checkin import add_user, add_chat
 from features.devmode import enable_dev, get_headers
 from features.feedback import request_feedback, receive_feedback
 from features.hashtag import hashtag
@@ -14,13 +17,13 @@ from features.inline import inline_search
 from features.roads import roadblock_callback
 from features.rss import rss
 from features.search import search, run_search
-from features.subscription import update_subscription, subscribed
+from features.start import send_instructions
+from features.subscription import update_subscription
 from features.transliterator import transliterate, retrieve_transliteration
 from features.welcome import welcome, verify_user
 from features.wrappers import private
 from helpers import get_keyboard
 from phrases import *
-from start import send_instructions
 
 # Enable logging
 logging.basicConfig(format='[%(asctime)s] [%(levelname)s] [bot]\n%(message)s',
@@ -33,8 +36,7 @@ logger = logging.getLogger(__name__)
 def cancel(_bot: Bot, update: Update, user_data: dict) -> int:
     update.message.reply_text(
         BOT_CANCELLED,
-        reply_markup=get_keyboard(update,
-                                  subscribed(update.message.from_user.id)))
+        reply_markup=get_keyboard(update))
     user_data.clear()
     return ConversationHandler.END
 
@@ -45,7 +47,6 @@ def error(_bot: Bot, _update: Update, exc: Exception) -> None:
     logger.error(exc)
 
 
-@private
 def typing(bot: Bot, update: Update) -> None:
     bot.send_chat_action(update.effective_chat.id, ChatAction.TYPING)
 
@@ -58,7 +59,7 @@ def main():
     jobs = updater.job_queue
 
     # Typing
-    dp.add_handler(MessageHandler(Filters.all, typing), group=-1)
+    dp.add_handler(MessageHandler(Filters.private, typing), group=-1)
 
     # Welcome
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members,
@@ -70,9 +71,12 @@ def main():
     dp.add_handler(MessageHandler((Filters.entity('hashtag') |
                                    Filters.caption_entity('hashtag')),
                                   hashtag))
+    dp.add_handler(RegexHandler(MENU_ADMIN, admin_menu))
+    dp.add_handler(RegexHandler(MENU_CHATS, chats_management))
     dp.add_handler(RegexHandler(r'({}|{})'.format(MENU_SUBSCRIBE,
                                                   MENU_UNSUBSCRIBE),
                                 update_subscription))
+    dp.add_handler(RegexHandler(MENU_RETURN, cancel, pass_user_data=True))
 
     # Conversations
     dp.add_handler(ConversationHandler(
@@ -119,9 +123,19 @@ def main():
     dp.add_handler(CallbackQueryHandler(verify_user,
                                         pattern=r'not_bot',
                                         pass_job_queue=True))
+    dp.add_handler(CallbackQueryHandler(change_chats_page,
+                                        pattern=r'chats_\d+'))
+    dp.add_handler(CallbackQueryHandler(update_chat_subscription,
+                                        pattern=r'chats_\D+'))
+    dp.add_handler(CallbackQueryHandler(admin_menu,
+                                        pattern=r'admin_return'))
 
     # This one will handle any random message
-    dp.add_handler(MessageHandler(Filters.all, send_instructions))
+    dp.add_handler(MessageHandler(Filters.private, send_instructions))
+
+    # Checkin
+    dp.add_handler(MessageHandler(Filters.private, add_user), group=1)
+    dp.add_handler(MessageHandler(Filters.group, add_chat), group=1)
 
     # Logging errors
     dp.add_error_handler(error)
