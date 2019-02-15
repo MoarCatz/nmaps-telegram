@@ -1,11 +1,13 @@
 from phrases import BOT_SUBSCRIBED_USR, BOT_UNSUBSCRIBED_USR
 from helpers import get_keyboard
-from telegram import Bot, Update
+from .wrappers import private
 
+from telegram import Bot, Update
 from pony.orm import db_session
 from db import Chat, User
 
 
+@private
 @db_session
 def update_subscription(_bot: Bot, update: Update) -> None:
     user_id = update.effective_user.id

@@ -11,6 +11,7 @@ from .subscription import subscribe_chat, unsubscribe_chat
 from .wrappers import admins_only, private
 
 
+@private
 @admins_only
 def admin_menu(bot: Bot, update: Update) -> None:
     bot.send_message(

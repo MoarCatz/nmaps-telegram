@@ -9,7 +9,7 @@ from db import User
 def private(f):
     @wraps(f)
     def wrapped_private(bot, update, *args, **kwargs):
-        if Filters.private.filter(update.message):
+        if update.callback_query or Filters.private.filter(update.message):
             return f(bot, update, *args, **kwargs)
     return wrapped_private
 
