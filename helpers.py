@@ -11,10 +11,11 @@ def get_keyboard(update: Update) -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardMarkup(main_menu.copy(),
                                    one_time_keyboard=True,
                                    resize_keyboard=True)
-    if User.get(user_id=update.effective_user.id).is_subscribed():
-        keyboard.keyboard.append([MENU_UNSUBSCRIBE])
-    else:
+    user = User.get(user_id=update.effective_user.id)
+    if user is None or not user.is_subscribed():
         keyboard.keyboard.append([MENU_SUBSCRIBE])
+    else:
+        keyboard.keyboard.append([MENU_UNSUBSCRIBE])
 
     if User.get(user_id=update.effective_user.id).is_admin():
         keyboard.keyboard.append([MENU_ADMIN])
