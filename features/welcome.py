@@ -1,4 +1,5 @@
-from telegram import Bot, Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import (Bot, Update, InlineKeyboardMarkup,
+                      InlineKeyboardButton, ChatMember)
 from telegram.ext import Job, JobQueue
 
 from config import nmaps_chat, mods_chat, roads_chat, english_chat
@@ -18,6 +19,9 @@ def welcome(bot: Bot, update: Update, job_queue: JobQueue) -> None:
     if update.effective_chat.id == nmaps_chat:
         bot.delete_message(nmaps_chat,
                            update.effective_message.message_id)
+        member = update.effective_chat.get_member(update.effective_user.id)
+        if member.status in (ChatMember.RESTRICTED, ChatMember.KICKED):
+            return
 
         msg = bot.send_message(nmaps_chat,
                                BOT_WELCOME_NMAPS.format(user_name),
