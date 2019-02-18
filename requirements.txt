@@ -4,7 +4,7 @@ requests
 cloudinary
 beautifulsoup4
 lxml
-psycopg2
+psycopg2-binary
 feedparser
 algoliasearch
 pony
