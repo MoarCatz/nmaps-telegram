@@ -57,7 +57,7 @@ class Chat(db.Entity):
 
 db.generate_mapping(create_tables=True)
 
-for chat in (nmaps_chat, mods_chat, roads_chat):
+for chat in (nmaps_chat, mods_chat):
     with db_session:
         if not Chat.exists(chat_id=chat):
             Chat(chat_id=chat, name="Chat {}".format(chat), subscribed=True)
