@@ -47,7 +47,8 @@ def update_chat_subscription(bot: Bot, update: Update) -> None:
 
 def change_chats_page(bot: Bot, update: Update) -> None:
     query = update.callback_query
-    page = int(query.data.split('-')[1])
+    print(query.data)
+    page = int(query.data.split('_')[1])
     bot.edit_message_reply_markup(
         chat_id=update.callback_query.message.chat_id,
         message_id=update.callback_query.message.message_id,
