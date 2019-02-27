@@ -103,7 +103,7 @@ def ban_roadblock_author(_bot: Bot, query: CallbackQuery) -> None:
         query.from_user.id),
                             parse_mode='markdown')
     with db_session:
-        U.get(user_id=nmaps_message.author).is_banned = True
+        U.get(user_id=nmaps_message.author).banned = True
 
 
 def request_roadblock_info(_bot: Bot, query: CallbackQuery) -> None:
