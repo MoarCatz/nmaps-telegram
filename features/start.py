@@ -1,9 +1,9 @@
 from telegram import Bot, Update
 
-from helpers import get_keyboard
-from phrases import MENU_ROADS, BOT_PRIVATE_ROAD_REPORT_USR, \
-    BOT_INLINE_INSTRUCTIONS, BOT_ACTION_SELECT, BOT_UNRECOGNIZED_MESSAGE
-from .wrappers import private
+from bot.helpers import get_keyboard, private
+from bot.phrases import (MENU_ROADS, BOT_PRIVATE_ROAD_REPORT_USR,
+                         BOT_INLINE_INSTRUCTIONS, BOT_ACTION_SELECT,
+                         BOT_UNRECOGNIZED_MESSAGE)
 
 
 @private

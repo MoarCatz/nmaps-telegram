@@ -2,10 +2,10 @@ from telegram import (Bot, Update, InlineKeyboardMarkup,
                       InlineKeyboardButton, ChatMember)
 from telegram.ext import Job, JobQueue
 
-from config import nmaps_chat, mods_chat, roads_chat, english_chat
-from phrases import (BOT_WELCOME_MODS, BOT_WELCOME_ROADS, BOT_WELCOME_ENG,
-                     BOT_WELCOME_NMAPS, BTN_NOT_BOT, BOT_NOT_VERIFIED,
-                     BOT_VERIFIED)
+from bot.config import nmaps_chat, mods_chat, roads_chat, english_chat
+from bot.phrases import (BOT_WELCOME_MODS, BOT_WELCOME_ROADS, BOT_WELCOME_ENG,
+                         BOT_WELCOME_NMAPS, BTN_NOT_BOT, BOT_NOT_VERIFIED,
+                         BOT_VERIFIED)
 
 VERIFY_MARKUP = InlineKeyboardMarkup(
     [[InlineKeyboardButton(BTN_NOT_BOT, callback_data='not_bot')]])

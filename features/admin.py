@@ -3,12 +3,12 @@ from telegram import (ReplyKeyboardMarkup, InlineKeyboardMarkup,
                       InlineKeyboardButton)
 from telegram.bot import Bot, Update
 
-from config import admin_menu as menu
-from db import Chat
-from phrases import (BOT_ADMIN_MENU, BOT_CHATS_MANAGE, BTN_NEXT_PAGE,
-                     BTN_PREV_PAGE, MENU_RETURN, BOT_SAVED)
-from .subscription import subscribe_chat, unsubscribe_chat
-from .wrappers import admins_only, private
+from bot.config import admin_menu as menu
+from bot.helpers import admins_only, private
+from bot.models import Chat
+from bot.phrases import (BOT_ADMIN_MENU, BOT_CHATS_MANAGE, BTN_NEXT_PAGE,
+                         BTN_PREV_PAGE, MENU_RETURN, BOT_SAVED)
+from features.subscription import subscribe_chat, unsubscribe_chat
 
 
 @private
@@ -61,10 +61,10 @@ def get_chats_keyboard(page: int):
     keyboard = []
     for chat in chats:
         if chat.is_subscribed():
-            data = 'chats_unsubscribe_{}_{}'.format(chat.chat_id, page)
+            data = f'chats_unsubscribe_{chat.chat_id}_{page}'
             text = '🔔 {}'
         else:
-            data = 'chats_subscribe_{}_{}'.format(chat.chat_id, page)
+            data = f'chats_subscribe_{chat.chat_id}_{page}'
             text = '🔕 {}'
         keyboard.append([InlineKeyboardButton(text.format(chat.name),
                                               callback_data=data)])
@@ -72,13 +72,13 @@ def get_chats_keyboard(page: int):
     if page > 1:
         footer.append(InlineKeyboardButton(
             BTN_PREV_PAGE,
-            callback_data='chats_{}'.format(page - 1)))
+            callback_data=f'chats_{page - 1}'))
     footer.append(InlineKeyboardButton(
         MENU_RETURN,
         callback_data='admin_return'))
     if count(c for c in Chat) > page * 10:
         footer.append(InlineKeyboardButton(
             BTN_NEXT_PAGE,
-            callback_data='chats_{}'.format(page + 1)))
+            callback_data=f'chats_{page + 1}'))
     keyboard.append(footer)
     return keyboard

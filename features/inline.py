@@ -1,8 +1,10 @@
-from telegram import InlineQueryResultArticle, InputTextMessageContent, Bot, \
-    Update
-from config import indices
-from phrases import inline_templates, INLINE_HELP_BUTTON
 from uuid import uuid4
+
+from telegram import (InlineQueryResultArticle, InputTextMessageContent,
+                      Bot, Update)
+
+from bot.config import indices
+from bot.phrases import inline_templates, INLINE_HELP_BUTTON
 
 
 def inline_search(_bot: Bot, update: Update) -> None:

@@ -1,8 +1,7 @@
 from telegram import Bot, Update, Message
 
-from .roads import new_roadblock
-from .screenshot import screenshot
-
+from features.roads import new_roadblock
+from features.screenshot import screenshot
 
 tags = {'#скрин': screenshot,
         '#screen': screenshot,

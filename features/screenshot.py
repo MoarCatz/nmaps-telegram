@@ -1,10 +1,9 @@
 from cloudinary.uploader import upload
 from telegram import Bot, Message, ChatAction
 
+from bot.devmode import enable_dev
+from bot.phrases import BOT_ILLEGAL_URL
 from features.capturer import Capturer, IllegalURL
-from features.devmode import enable_dev
-from phrases import BOT_ILLEGAL_URL
-
 
 if not enable_dev():
     cpt = Capturer()

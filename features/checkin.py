@@ -1,7 +1,7 @@
 from pony.orm import db_session
 from telegram.bot import Bot, Update, User
 
-from db import Chat, User as U
+from bot.models import Chat, User as U
 
 
 @db_session

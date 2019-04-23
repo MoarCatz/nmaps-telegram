@@ -1,11 +1,10 @@
 from telegram import Bot, Update, ReplyKeyboardMarkup
 from telegram.ext import ConversationHandler
 
-from config import FEEDBACK_REQUESTED, alexfox
-from features.wrappers import private
-from helpers import get_keyboard
-from phrases import BOT_SEND_FEEDBACK_USR, MENU_RETURN, \
-    BOT_FEEDBACK_SENT_USR, BOT_DELIVER_FEEDBACK
+from bot.config import FEEDBACK_REQUESTED, alexfox
+from bot.helpers import get_keyboard, private
+from bot.phrases import (BOT_SEND_FEEDBACK_USR, MENU_RETURN,
+                         BOT_FEEDBACK_SENT_USR, BOT_DELIVER_FEEDBACK)
 
 
 @private

@@ -7,9 +7,10 @@ from pony.orm import db_session
 from telegram import Bot
 from telegram.error import TelegramError
 
-from config import instantview_url
-from db import Chat, Rss, User
-from phrases import BOT_NEW_RSS
+from bot.config import instantview_url
+from bot.models import Rss
+from bot.phrases import BOT_NEW_RSS
+from features.subscription import get_subscribed_users, get_subscribed_chats
 
 log_level = logging.INFO
 
@@ -35,10 +36,10 @@ def rss(bot: Bot, _job) -> None:
         Rss.select().delete()
         Rss(last_published=new_latest_date)
 
-    log.info('Wrote latest timestamp to database: {}'.format(new_latest_date))
+    log.info(f'Wrote latest timestamp to database: {new_latest_date}')
 
     if new_entries:
-        recipients = tuple(chain(get_subscribers(), get_subscribed_chats()))
+        recipients = tuple(chain(get_subscribed_users(), get_subscribed_chats()))
         log.info('Fetched subscribers')
         log.info('Sending new posts')
         for entry in list(reversed(new_entries)):
@@ -55,7 +56,7 @@ def get_new_entries() -> tuple:
     with db_session:
         last_published = int(Rss.get().last_published)
 
-    log.info('Last published post timestamp is {}'.format(last_published))
+    log.info(f'Last published post timestamp is {last_published}')
     new_latest_date = last_published
 
     new_entries = []
@@ -64,7 +65,7 @@ def get_new_entries() -> tuple:
             i < len(entries) - 1:
         if timegm(entries[i].published_parsed) > new_latest_date:
             new_latest_date = timegm(entries[i].published_parsed)
-        log.info('New entry: {}'.format(entries[i].link))
+        log.info(f'New entry: {entries[i].link}')
         new_entries.append(entries[i].link)
         i += 1
 
@@ -72,20 +73,10 @@ def get_new_entries() -> tuple:
 
 
 def send_post(bot: Bot, url: str, recipients: tuple) -> None:
-    log.info('Sending post: {}'.format(url))
+    log.info(f'Sending post: {url}')
     message_text = BOT_NEW_RSS.format(instantview_url.format(url), url)
     for recipient in recipients:
         try:
             bot.send_message(recipient, message_text, parse_mode='markdown')
         except TelegramError:
             pass
-
-
-@db_session
-def get_subscribers() -> list:
-    return [u.user_id for u in User.select(lambda s: s.is_subscribed())]
-
-
-@db_session
-def get_subscribed_chats() -> list:
-    return [c.chat_id for c in Chat.select(lambda s: s.is_subscribed())]

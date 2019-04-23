@@ -3,9 +3,9 @@ import urllib.request
 
 from telegram import Bot, Update, ReplyKeyboardMarkup
 
-from features.wrappers import private
-from config import TRANSLITERATE_REQUESTED, transliterator
-from phrases import BOT_TRANSLITERATE_QUERY, MENU_RETURN, BOT_TRANS_CONTINUE
+from bot.config import TRANSLITERATE_REQUESTED, transliterator
+from bot.helpers import private
+from bot.phrases import BOT_TRANSLITERATE_QUERY, MENU_RETURN, BOT_TRANS_CONTINUE
 
 
 @private
