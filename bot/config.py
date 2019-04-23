@@ -1,7 +1,7 @@
 import os
 import re
 
-from algoliasearch import algoliasearch
+from algoliasearch.search_client import SearchClient
 
 from bot.phrases import *
 
@@ -16,8 +16,8 @@ db_creds = {'host': os.getenv('DBHOST', 'localhost'),
             'password': os.getenv('DBPASS', 'postgres')}
 # -----------------
 # Inline search tool
-client = algoliasearch.Client(os.getenv('ALGOLIA_CLIENT', 'key'),
-                              os.getenv('ALGOLIASEARCH_API_KEY_SEARCH', 'key'))
+client = SearchClient.create(os.getenv('ALGOLIA_CLIENT', 'key'),
+                             os.getenv('ALGOLIASEARCH_API_KEY_SEARCH', 'key'))
 # Algolia indices
 links = client.init_index('links')
 rules = client.init_index('rules')
@@ -59,3 +59,34 @@ instantview_url = 'https://t.me/iv?url={}&rhash=082e533d0deed1'
 rules_search_url = 'https://yandex.ru/support/search-results/?service=nmaps&query='
 club_search_url = 'https://yandex.ru/blog/narod-karta/search?text='
 transliterator = 'https://script.google.com/macros/s/AKfycbwCfGxk22dNUACxjRMULtVo4UzzRwfk49g9rIy-yycPMACtEps2/exec?'
+# -----------------
+# Bookmarks
+bookmarks = (
+        (
+            ('Правила', 'https://yandex.ru/support/nmaps/rules_2.html'),
+            ('Клуб', 'https://yandex.ru/blog/narod-karta')
+        ),
+        (
+            ('ПКК', 'https://pkk5.rosreestr.ru/'),
+            ('ФИАС', 'https://fias.nalog.ru/')
+        ),
+        (
+            ('ЕГРП365', 'https://egrp365.ru/map/'),
+            ('TerraServer', 'https://www.terraserver.com/')
+        ),
+        (
+            ('Реформа ЖКХ', 'https://www.reformagkh.ru/'),
+            ('КЛАДР', 'https://kladr-rf.ru/')
+        ),
+        (
+            ('Водный реестр', 'http://textual.ru/gvr'),
+            ('ФГИС ТП', 'http://fgis.economy.gov.ru/fgis/')
+        ),
+        (
+            ('Транслитератор названий', STREET_TRANSLITERATOR),
+            ('Подбор слов', 'https://wordstat.yandex.ru')
+        ),
+        (
+            ('FAQ НЯК', 'https://tinyurl.com/FAQ-NYK'),
+        )
+)

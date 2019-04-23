@@ -8,7 +8,6 @@ from bot.helpers import admins_only, private
 from bot.models import Chat
 from bot.phrases import (BOT_ADMIN_MENU, BOT_CHATS_MANAGE, BTN_NEXT_PAGE,
                          BTN_PREV_PAGE, MENU_RETURN, BOT_SAVED)
-from features.subscription import subscribe_chat, unsubscribe_chat
 
 
 @private
@@ -34,10 +33,11 @@ def update_chat_subscription(bot: Bot, update: Update) -> None:
     query = update.callback_query
     chat_id = int(query.data.split('_')[-2])
     page = int(query.data.split('_')[-1])
-    if query.data.startswith('chats_subscribe'):
-        subscribe_chat(chat_id)
-    else:
-        unsubscribe_chat(chat_id)
+    with db_session:
+        if query.data.startswith('chats_subscribe'):
+            Chat[chat_id].subscribe()
+        else:
+            Chat[chat_id].unsubscribe()
     bot.edit_message_reply_markup(
         chat_id=update.callback_query.message.chat_id,
         message_id=update.callback_query.message.message_id,
@@ -57,10 +57,10 @@ def change_chats_page(bot: Bot, update: Update) -> None:
 
 @db_session
 def get_chats_keyboard(page: int):
-    chats = Chat.select().order_by(Chat.id).page(page)
+    chats = Chat.select().order_by(Chat.chat_id).page(page)
     keyboard = []
     for chat in chats:
-        if chat.is_subscribed():
+        if chat.subscribed:
             data = f'chats_unsubscribe_{chat.chat_id}_{page}'
             text = '🔔 {}'
         else:

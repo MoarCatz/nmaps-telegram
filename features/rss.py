@@ -8,9 +8,8 @@ from telegram import Bot
 from telegram.error import TelegramError
 
 from bot.config import instantview_url
-from bot.models import Rss
+from bot.models import Rss, Chat, User
 from bot.phrases import BOT_NEW_RSS
-from features.subscription import get_subscribed_users, get_subscribed_chats
 
 log_level = logging.INFO
 
@@ -39,7 +38,8 @@ def rss(bot: Bot, _job) -> None:
     log.info(f'Wrote latest timestamp to database: {new_latest_date}')
 
     if new_entries:
-        recipients = tuple(chain(get_subscribed_users(), get_subscribed_chats()))
+        recipients = tuple(chain(Chat.get_subscribers(),
+                                 User.get_subscribers()))
         log.info('Fetched subscribers')
         log.info('Sending new posts')
         for entry in list(reversed(new_entries)):

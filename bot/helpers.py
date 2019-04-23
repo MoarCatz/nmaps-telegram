@@ -15,7 +15,7 @@ def get_keyboard(update: Update) -> ReplyKeyboardMarkup:
                                    one_time_keyboard=True,
                                    resize_keyboard=True)
     user = User[update.effective_user.id]
-    if user is None or not user.is_subscribed():
+    if user is None or not user.subscribed:
         keyboard.keyboard.append([MENU_SUBSCRIBE])
     else:
         keyboard.keyboard.append([MENU_UNSUBSCRIBE])

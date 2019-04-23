@@ -10,8 +10,8 @@ from bot.phrases import *
 from bot.service import init_db
 from features.admin import (admin_menu, chats_management, change_chats_page,
                             update_chat_subscription)
-from features.bookmarks import bookmarks
-from features.checkin import add_user, add_chat
+from features.bookmarks import send_bookmarks
+from features.checkin import checkin
 from features.feedback import request_feedback, receive_feedback
 from features.hashtag import hashtag
 from features.inline import inline_search
@@ -34,7 +34,7 @@ dp.add_handler(MessageHandler(Filters.status_update.new_chat_members,
 
 dp.add_handler(RegexHandler(fr'(/start[a-z-]*|{MENU_ROADS})',
                             send_instructions))
-dp.add_handler(RegexHandler(MENU_LINKS, bookmarks))
+dp.add_handler(RegexHandler(MENU_LINKS, send_bookmarks))
 dp.add_handler(MessageHandler((Filters.entity('hashtag') |
                                Filters.caption_entity('hashtag')),
                               hashtag))
@@ -100,8 +100,7 @@ dp.add_handler(CallbackQueryHandler(admin_menu,
 dp.add_handler(MessageHandler(Filters.private, send_instructions))
 
 # Checkin
-dp.add_handler(MessageHandler(Filters.private, add_user), group=1)
-dp.add_handler(MessageHandler(Filters.group, add_chat), group=1)
+dp.add_handler(MessageHandler(Filters.all, checkin), group=1)
 
 # Logging errors
 dp.add_error_handler(error)

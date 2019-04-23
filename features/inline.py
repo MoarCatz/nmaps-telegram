@@ -12,7 +12,7 @@ def inline_search(_bot: Bot, update: Update) -> None:
 
     search_results = []
     for index in indices:
-        search_results.append((index.index_name,
+        search_results.append((index.name,
                                index.search(query.query)))
 
     articles = []
