@@ -1,7 +1,7 @@
 from functools import wraps
 
 from pony.orm import db_session
-from telegram import ReplyKeyboardMarkup, Update, Bot
+from telegram import ReplyKeyboardMarkup, Update, Bot, Message
 from telegram.ext import Filters, ConversationHandler
 
 from bot.config import main_menu
@@ -50,3 +50,7 @@ def cancel(_bot: Bot, update: Update, user_data: dict) -> int:
         reply_markup=get_keyboard(update))
     user_data.clear()
     return ConversationHandler.END
+
+
+def get_original_message(message: Message) -> Message:
+    return message.reply_to_message if message.reply_to_message else message
