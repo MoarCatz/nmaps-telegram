@@ -13,7 +13,7 @@ class Subscriber(db.Entity):
     id = PrimaryKey(int, size=64)
     name = Required(str)
     previous_names = Optional(StrArray)
-    subscribed = Required(bool, sql_default='FALSE')
+    subscribed = Required(bool, sql_default="FALSE")
 
     def subscribe(self) -> NoReturn:
         self.subscribed = True
@@ -34,8 +34,8 @@ class Subscriber(db.Entity):
 
 
 class User(Subscriber):
-    admin = Required(bool, sql_default='FALSE')
-    banned = Required(bool, sql_default='FALSE')
+    admin = Required(bool, sql_default="FALSE")
+    banned = Required(bool, sql_default="FALSE")
     roadblocks = Set(lambda: Roadblock)
 
 

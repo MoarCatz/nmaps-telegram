@@ -11,9 +11,9 @@ from bot.phrases import MENU_SUBSCRIBE, MENU_UNSUBSCRIBE, MENU_ADMIN, BOT_CANCEL
 
 @db_session
 def get_keyboard(update: Update) -> ReplyKeyboardMarkup:
-    keyboard = ReplyKeyboardMarkup(main_menu.copy(),
-                                   one_time_keyboard=True,
-                                   resize_keyboard=True)
+    keyboard = ReplyKeyboardMarkup(
+        main_menu.copy(), one_time_keyboard=True, resize_keyboard=True
+    )
     user = User[update.effective_user.id]
     if user is None or not user.subscribed:
         keyboard.keyboard.append([MENU_SUBSCRIBE])
@@ -32,22 +32,22 @@ def admins_only(f):
         with db_session:
             if User[update.effective_user.id].admin:
                 return f(bot, update, *args, **kwargs)
+
     return wrapped_admins
 
 
 def private(f):
     @wraps(f)
-    def wrapped_private(bot, update, *args, **kwargs):
+    def wrapped_private(bot: Bot, update: Update, *args, **kwargs):
         if update.callback_query or Filters.private.filter(update.message):
             return f(bot, update, *args, **kwargs)
+
     return wrapped_private
 
 
 @private
 def cancel(_bot: Bot, update: Update, user_data: dict) -> int:
-    update.message.reply_text(
-        BOT_CANCELLED,
-        reply_markup=get_keyboard(update))
+    update.message.reply_text(BOT_CANCELLED, reply_markup=get_keyboard(update))
     user_data.clear()
     return ConversationHandler.END
 
