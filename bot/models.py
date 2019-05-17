@@ -12,7 +12,7 @@ class Rss(db.Entity):
 class Subscriber(db.Entity):
     id = PrimaryKey(int, size=64)
     name = Required(str)
-    previous_names = Optional(StrArray)
+    previous_names = Optional(StrArray, default=[])
     subscribed = Required(bool, sql_default="FALSE")
 
     def subscribe(self) -> NoReturn:
