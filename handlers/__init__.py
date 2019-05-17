@@ -25,7 +25,7 @@ handlers = [bookmarks_handler, transliterator_handler, search_handler,
             admin_menu_handler,
             chats_management_handler,
             chats_page_handler, chats_subscriptions_handler,
-            cancel_handler, checkin_handler, hashtag_handler,
+            cancel_handler, hashtag_handler,
             roadblock_callback_handler, inline_search_handler,
             roads_instructions_handler,
             verification_handler, welcome_handler]

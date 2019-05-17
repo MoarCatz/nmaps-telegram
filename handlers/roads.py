@@ -9,6 +9,7 @@ from telegram import (
     Message,
     CallbackQuery,
     User,
+    ParseMode
 )
 from telegram.ext import BaseFilter, CallbackQueryHandler
 
@@ -61,18 +62,16 @@ staff_keyboard, mods_keyboard, investigation_keyboard = map(
 
 
 def new_roadblock(bot: Bot, message: Message) -> None:
-    if banned(message.from_user) or message.chat_id == roads_chat or spam(message):
+    if banned(message.from_user) or message.chat_id == roads_chat:
         return
 
     user_id = message.from_user.id
-    with db_session:
-        U.get(user_id=user_id).roadblocks_count += 1
     user = bot.get_chat_member(mods_chat, user_id)
     if user["status"] in ("creator", "administrator", "member"):
         bypass_moderators(bot, message)
         return
 
-    message.reply_text(BOT_MSG_ACCEPT.format(message.from_user.name))
+    message.reply_markdown(BOT_MSG_ACCEPT.format(message.from_user.mention_markdown()))
     msg = BOT_REQUEST_CHECK.format(message.from_user.name)
     mods_message = bot.send_message(mods_chat, msg, reply_markup=mods_keyboard)
     message.forward(mods_chat)
@@ -101,7 +100,7 @@ def cancel_roadblock(bot: Bot, query: CallbackQuery) -> None:
     )
     query.edit_message_text(
         BOT_REQUEST_CANCELLED.format(
-            query.from_user.mention_markdown(), parse_mode="markdown"
+            query.from_user.mention_markdown(), parse_mode=ParseMode.MARKDOWN
         )
     )
 
@@ -113,24 +112,24 @@ def ban_roadblock_author(_bot: Bot, query: CallbackQuery) -> None:
         nmaps_message = retrieve_roadblock(roads_id=query.message.message_id)
     query.edit_message_text(
         BOT_USER_BANNED.format(query.from_user.mention_markdown()),
-        parse_mode="markdown",
+        parse_mode=ParseMode.MARKDOWN,
     )
     with db_session:
-        U.get(user_id=nmaps_message.author).banned = True
+        U.get(id=nmaps_message.author.id).banned = True
 
 
 def request_roadblock_info(_bot: Bot, query: CallbackQuery) -> None:
     query.edit_message_text(
         BOT_INVESTIGATING.format(query.from_user.mention_markdown()),
         reply_markup=investigation_keyboard,
-        parse_mode="markdown",
+        parse_mode=ParseMode.MARKDOWN,
     )
 
 
 def accept_roadblock(bot: Bot, query: CallbackQuery) -> None:
     query.edit_message_text(
         BOT_SENT_TO_STAFF.format(query.from_user.mention_markdown()),
-        parse_mode="markdown",
+        parse_mode=ParseMode.MARKDOWN,
     )
     nmaps_message = retrieve_roadblock(mods_id=query.message.message_id)
     bot.forward_message(
@@ -149,7 +148,7 @@ def accept_roadblock(bot: Bot, query: CallbackQuery) -> None:
 
 
 def bypass_moderators(bot: Bot, message: Message) -> None:
-    message.reply_text(BOT_MSG_ACCEPT.format(message.from_user.mention_markdown()))
+    message.reply_markdown(BOT_MSG_ACCEPT.format(message.from_user.mention_markdown()))
     bot.forward_message(roads_chat, message.chat_id, message.message_id)
     roads_message = bot.send_message(
         roads_chat, BOT_NEW_ROADBLOCK, reply_markup=staff_keyboard
@@ -185,7 +184,7 @@ def send_roadblock_resolution(bot: Bot, query: CallbackQuery) -> None:
         nmaps_message.chat_id, msg, reply_to_message_id=nmaps_message.chat_message_id
     )
     query.edit_message_text(
-        btn_msg.format(query.from_user.mention_markdown()), parse_mode="markdown"
+        btn_msg.format(query.from_user.mention_markdown()), parse_mode=ParseMode.MARKDOWN
     )
 
 
@@ -213,16 +212,7 @@ def roadblock_callback(bot: Bot, update: Update) -> None:
 
 @db_session
 def banned(user: User) -> bool:
-    return U.get(user_id=user.id).is_banned()
-
-
-def spam(message: Message) -> bool:
-    return (
-        message.text
-        and len(message.text) < 15
-        or message.caption
-        and len(message.caption) < 15
-    ) and not message.reply_to_message
+    return U.get(id=user.id).banned
 
 
 roadblock_callback_handler = CallbackQueryHandler(

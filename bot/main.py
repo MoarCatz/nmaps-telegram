@@ -4,7 +4,7 @@ from bot.config import *
 from bot.db import init_db
 from bot.devmode import enable_dev, get_headers
 from bot.logger import error
-from handlers import handlers
+from handlers import handlers, checkin_handler
 from jobs.rss import rss
 
 # Setup
@@ -13,8 +13,9 @@ dp = updater.dispatcher
 jobs = updater.job_queue
 
 # Register handlers
+dp.add_handler(checkin_handler, group=0)
 for handler in handlers:
-    dp.add_handler(handler)
+    dp.add_handler(handler, group=1)
 
 # Register loggers
 dp.add_error_handler(error)

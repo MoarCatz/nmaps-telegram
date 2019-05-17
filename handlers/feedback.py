@@ -1,4 +1,4 @@
-from telegram import Bot, Update, ReplyKeyboardMarkup
+from telegram import Bot, Update, ReplyKeyboardMarkup, ParseMode
 from telegram.ext import ConversationHandler, RegexHandler
 
 from bot.config import FEEDBACK_REQUESTED, alexfox
@@ -29,7 +29,7 @@ def receive_feedback(bot: Bot, update: Update) -> int:
     bot.send_message(
         alexfox,
         BOT_DELIVER_FEEDBACK.format(update.effective_user.name, update.message.text),
-        parse_mode="markdown",
+        parse_mode=ParseMode.MARKDOWN,
     )
     return ConversationHandler.END
 

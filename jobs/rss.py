@@ -5,7 +5,7 @@ from typing import NoReturn
 
 import feedparser
 from pony.orm import db_session
-from telegram import Bot
+from telegram import Bot, ParseMode
 from telegram.error import TelegramError
 
 from bot.config import instantview_url
@@ -76,6 +76,6 @@ def send_post(bot: Bot, url: str, recipients: tuple) -> NoReturn:
     message_text = BOT_NEW_RSS.format(instantview_url.format(url), url)
     for recipient in recipients:
         try:
-            bot.send_message(recipient, message_text, parse_mode="markdown")
+            bot.send_message(recipient, message_text, parse_mode=ParseMode.MARKDOWN)
         except TelegramError:
             pass
