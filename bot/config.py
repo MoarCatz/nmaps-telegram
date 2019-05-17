@@ -11,11 +11,14 @@ telegram_key = os.getenv(
 )
 # -----------------
 # Database credentials
+DATABASE_URL = os.environ['DATABASE_URL']
+DATABASE_PATTERN = re.compile(r'postgres:\/\/(\S+?):(\S+?)@(\S+?):(\d+)\/(\S+)')
+match = re.match(DATABASE_PATTERN, DATABASE_URL)
 db_creds = {
-    "host": os.getenv("DBHOST", "localhost"),
-    "database": os.getenv("DBNAME", "postgres"),
-    "user": os.getenv("DBUSER", "postgres"),
-    "password": os.getenv("DBPASS", "postgres"),
+    "host": match.group(3),
+    "database": match.group(5),
+    "user": match.group(1),
+    "password": match.group(2),
 }
 # -----------------
 # Inline search tool
