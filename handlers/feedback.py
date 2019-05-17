@@ -1,9 +1,10 @@
 from telegram import Bot, Update, ReplyKeyboardMarkup, ParseMode
-from telegram.ext import ConversationHandler, RegexHandler
+from telegram.ext import (ConversationHandler, MessageHandler, RegexHandler,
+                          Filters)
 
 from bot.config import FEEDBACK_REQUESTED, alexfox
 from handlers import cancel_handler
-from bot.helpers import get_keyboard, private
+from bot.helpers import get_keyboard, private, cancel
 from bot.phrases import (
     BOT_SEND_FEEDBACK_USR,
     MENU_FEEDBACK,
@@ -25,6 +26,9 @@ def request_feedback(_bot: Bot, update: Update) -> int:
 
 
 def receive_feedback(bot: Bot, update: Update) -> int:
+    if update.message.text == MENU_RETURN:
+        cancel(bot, update)
+        return ConversationHandler.END
     update.message.reply_text(BOT_FEEDBACK_SENT_USR,
                               reply_markup=get_keyboard(update))
     bot.send_message(
@@ -38,7 +42,8 @@ def receive_feedback(bot: Bot, update: Update) -> int:
 
 feedback_handler = ConversationHandler(
     entry_points=[RegexHandler(MENU_FEEDBACK, request_feedback)],
-    states={FEEDBACK_REQUESTED: [RegexHandler(r"^(?!⬅ Вернуться)",
-                                              receive_feedback)]},
-    fallbacks=[cancel_handler],
+    states={FEEDBACK_REQUESTED: [
+        cancel_handler,
+        MessageHandler(Filters.text, receive_feedback)]},
+    fallbacks=[]
 )

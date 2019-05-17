@@ -1,6 +1,5 @@
 import logging
 from calendar import timegm
-from itertools import chain
 from typing import NoReturn
 
 import feedparser
@@ -9,7 +8,7 @@ from telegram import Bot, ParseMode
 from telegram.error import TelegramError
 
 from bot.config import instantview_url
-from bot.models import Rss, Chat, User
+from bot.models import Rss, Subscriber
 from bot.phrases import BOT_NEW_RSS
 
 log_level = logging.INFO
@@ -40,8 +39,9 @@ def rss(bot: Bot, _job) -> NoReturn:
     log.info(f"Wrote latest timestamp to database: {new_latest_date}")
 
     if new_entries:
-        recipients = tuple(chain(Chat.get_subscribers(),
-                                 User.get_subscribers()))
+        with db_session:
+            recipients = tuple(Subscriber.get_subscribers_id())
+        log.info(len(recipients))
         log.info("Fetched subscribers")
         log.info("Sending new posts")
         for entry in list(reversed(new_entries)):

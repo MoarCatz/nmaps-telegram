@@ -47,9 +47,10 @@ def private(f):
 
 
 @private
-def cancel(_bot: Bot, update: Update, user_data: dict) -> int:
+def cancel(_bot: Bot, update: Update, user_data: dict = None) -> int:
     update.message.reply_text(BOT_CANCELLED, reply_markup=get_keyboard(update))
-    user_data.clear()
+    if user_data is not None:
+        user_data.clear()
     return ConversationHandler.END
 
 

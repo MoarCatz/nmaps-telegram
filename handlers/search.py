@@ -1,7 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 from telegram import Bot, Update, ReplyKeyboardMarkup
-from telegram.ext import ConversationHandler, RegexHandler
+from telegram.ext import (ConversationHandler, RegexHandler, MessageHandler,
+                          Filters)
 
 from handlers import cancel_handler
 from bot.config import (SEARCH_QUERY_REQUESTED, rules_search_url,
@@ -91,7 +92,8 @@ search_handler = ConversationHandler(
     ],
     states={
         SEARCH_QUERY_REQUESTED: [
-            RegexHandler(r"^(?!⬅ Вернуться)", run_search, pass_user_data=True)
+            cancel_handler,
+            MessageHandler(Filters.text, run_search, pass_user_data=True)
         ]
     },
     fallbacks=[cancel_handler],

@@ -1,4 +1,4 @@
-from pony.orm import PrimaryKey, Required, Optional, Set, StrArray
+from pony.orm import PrimaryKey, Required, Optional, Set, StrArray, select
 
 from bot.db import db
 from typing import NoReturn, List
@@ -29,8 +29,8 @@ class Subscriber(db.Entity):
         cls(id=subscriber_id, name=name)
 
     @classmethod
-    def get_subscribers(cls) -> List[int]:
-        return User.select(lambda s: s.subscribed)
+    def get_subscribers_id(cls) -> List[int]:
+        return select(s.id for s in Subscriber if s.subscribed)
 
 
 class User(Subscriber):

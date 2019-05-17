@@ -101,8 +101,9 @@ def cancel_roadblock(bot: Bot, query: CallbackQuery) -> None:
     )
     query.edit_message_text(
         BOT_REQUEST_CANCELLED.format(
-            query.from_user.mention_markdown(), parse_mode=ParseMode.MARKDOWN
-        )
+            query.from_user.mention_markdown()
+        ),
+        parse_mode=ParseMode.MARKDOWN
     )
 
 

@@ -18,14 +18,15 @@ from handlers.subscription import subscription_handler
 from handlers.transliterator import transliterator_handler
 from handlers.welcome import verification_handler, welcome_handler
 
-handlers = [bookmarks_handler, transliterator_handler, search_handler,
-            subscription_handler, feedback_handler,
-            start_handler,
-            admin_return_handler,
-            admin_menu_handler,
+handlers = [admin_menu_handler, admin_return_handler, chats_page_handler,
             chats_management_handler,
-            chats_page_handler, chats_subscriptions_handler,
-            cancel_handler, hashtag_handler,
+            chats_subscriptions_handler,
+            bookmarks_handler, transliterator_handler,
+            search_handler,
+            subscription_handler, feedback_handler,
+            cancel_handler,
+            hashtag_handler,
+            start_handler,
             roadblock_callback_handler, inline_search_handler,
             roads_instructions_handler,
             verification_handler, welcome_handler]

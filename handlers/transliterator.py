@@ -2,7 +2,8 @@ import urllib.parse
 import urllib.request
 
 from telegram import Bot, Update, ReplyKeyboardMarkup
-from telegram.ext import ConversationHandler, RegexHandler
+from telegram.ext import (ConversationHandler, RegexHandler, MessageHandler,
+                          Filters)
 
 from bot.config import TRANSLITERATE_REQUESTED, transliterator
 from handlers import cancel_handler
@@ -48,8 +49,9 @@ transliterator_handler = ConversationHandler(
     entry_points=[RegexHandler(MENU_TRANSLIT, transliterate)],
     states={
         TRANSLITERATE_REQUESTED: [
-            RegexHandler(r"^(?!⬅ Вернуться)", retrieve_transliteration)
+            cancel_handler,
+            MessageHandler(Filters.text, retrieve_transliteration)
         ]
     },
-    fallbacks=[cancel_handler],
+    fallbacks=[],
 )

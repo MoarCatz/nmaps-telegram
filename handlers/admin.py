@@ -59,7 +59,6 @@ def update_chat_subscription(bot: Bot, update: Update) -> None:
 
 def change_chats_page(bot: Bot, update: Update) -> None:
     query = update.callback_query
-    print(query.data)
     page = int(query.data.split("_")[1])
     bot.edit_message_reply_markup(
         chat_id=update.callback_query.message.chat_id,
@@ -70,14 +69,14 @@ def change_chats_page(bot: Bot, update: Update) -> None:
 
 @db_session
 def get_chats_keyboard(page: int):
-    chats = Chat.select().order_by(Chat.chat_id).page(page)
+    chats = Chat.select().order_by(Chat.id).page(page)
     keyboard = []
     for chat in chats:
         if chat.subscribed:
-            data = f"chats_unsubscribe_{chat.chat_id}_{page}"
+            data = f"chats_unsubscribe_{chat.id}_{page}"
             text = "🔔 {}"
         else:
-            data = f"chats_subscribe_{chat.chat_id}_{page}"
+            data = f"chats_subscribe_{chat.id}_{page}"
             text = "🔕 {}"
         keyboard.append(
             [InlineKeyboardButton(text.format(chat.name), callback_data=data)]
