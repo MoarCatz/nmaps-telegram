@@ -21,7 +21,8 @@ log_handler = logging.StreamHandler()
 log_handler.setLevel(log_level)
 
 log_fmt = logging.Formatter(
-    "[{asctime}] [{levelname}] [RSS]\n{message}\n", datefmt="%d-%m %H:%M:%S", style="{"
+    "[{asctime}] [{levelname}] [RSS]\n{message}\n",
+    datefmt="%d-%m %H:%M:%S", style="{"
 )
 log_handler.setFormatter(log_fmt)
 
@@ -39,7 +40,8 @@ def rss(bot: Bot, _job) -> NoReturn:
     log.info(f"Wrote latest timestamp to database: {new_latest_date}")
 
     if new_entries:
-        recipients = tuple(chain(Chat.get_subscribers(), User.get_subscribers()))
+        recipients = tuple(chain(Chat.get_subscribers(),
+                                 User.get_subscribers()))
         log.info("Fetched subscribers")
         log.info("Sending new posts")
         for entry in list(reversed(new_entries)):
@@ -61,7 +63,8 @@ def get_new_entries() -> tuple:
 
     new_entries = []
     i = 0
-    while timegm(entries[i].published_parsed) > last_published and i < len(entries) - 1:
+    while timegm(entries[i].published_parsed) > last_published \
+            and i < len(entries) - 1:
         if timegm(entries[i].published_parsed) > new_latest_date:
             new_latest_date = timegm(entries[i].published_parsed)
         log.info(f"New entry: {entries[i].link}")
@@ -76,6 +79,7 @@ def send_post(bot: Bot, url: str, recipients: tuple) -> NoReturn:
     message_text = BOT_NEW_RSS.format(instantview_url.format(url), url)
     for recipient in recipients:
         try:
-            bot.send_message(recipient, message_text, parse_mode=ParseMode.MARKDOWN)
+            bot.send_message(recipient, message_text,
+                             parse_mode=ParseMode.MARKDOWN)
         except TelegramError:
             pass

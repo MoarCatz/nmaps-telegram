@@ -6,7 +6,8 @@ from telegram.ext import Filters, ConversationHandler
 
 from bot.config import main_menu
 from bot.models import User
-from bot.phrases import MENU_SUBSCRIBE, MENU_UNSUBSCRIBE, MENU_ADMIN, BOT_CANCELLED
+from bot.phrases import (MENU_SUBSCRIBE, MENU_UNSUBSCRIBE, MENU_ADMIN,
+                         BOT_CANCELLED)
 
 
 @db_session

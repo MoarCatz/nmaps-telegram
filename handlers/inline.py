@@ -1,6 +1,7 @@
 from uuid import uuid4
 
-from telegram import InlineQueryResultArticle, InputTextMessageContent, Bot, Update
+from telegram import (InlineQueryResultArticle, InputTextMessageContent, Bot,
+                      Update)
 from telegram.ext import InlineQueryHandler
 
 from bot.config import indices
@@ -29,7 +30,8 @@ def inline_search(_bot: Bot, update: Update) -> None:
                     id=uuid4(),
                     title=res["title"],
                     url=res["url"] if "url" in res else None,
-                    description=res["short"] if "short" in res else res["text"],
+                    description=res["short"] if "short" in res
+                    else res["text"],
                     input_message_content=message_text,
                     hide_url=True,
                 )

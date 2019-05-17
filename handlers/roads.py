@@ -71,7 +71,8 @@ def new_roadblock(bot: Bot, message: Message) -> None:
         bypass_moderators(bot, message)
         return
 
-    message.reply_markdown(BOT_MSG_ACCEPT.format(message.from_user.mention_markdown()))
+    message.reply_markdown(BOT_MSG_ACCEPT.format(
+        message.from_user.mention_markdown()))
     msg = BOT_REQUEST_CHECK.format(message.from_user.name)
     mods_message = bot.send_message(mods_chat, msg, reply_markup=mods_keyboard)
     message.forward(mods_chat)
@@ -148,7 +149,8 @@ def accept_roadblock(bot: Bot, query: CallbackQuery) -> None:
 
 
 def bypass_moderators(bot: Bot, message: Message) -> None:
-    message.reply_markdown(BOT_MSG_ACCEPT.format(message.from_user.mention_markdown()))
+    message.reply_markdown(BOT_MSG_ACCEPT.format(
+        message.from_user.mention_markdown()))
     bot.forward_message(roads_chat, message.chat_id, message.message_id)
     roads_message = bot.send_message(
         roads_chat, BOT_NEW_ROADBLOCK, reply_markup=staff_keyboard
@@ -181,10 +183,12 @@ def send_roadblock_resolution(bot: Bot, query: CallbackQuery) -> None:
         btn_msg = BOT_INFOPOINT_SET
 
     bot.send_message(
-        nmaps_message.chat_id, msg, reply_to_message_id=nmaps_message.chat_message_id
+        nmaps_message.chat_id, msg,
+        reply_to_message_id=nmaps_message.chat_message_id
     )
     query.edit_message_text(
-        btn_msg.format(query.from_user.mention_markdown()), parse_mode=ParseMode.MARKDOWN
+        btn_msg.format(query.from_user.mention_markdown()),
+        parse_mode=ParseMode.MARKDOWN
     )
 
 

@@ -1,5 +1,7 @@
-from telegram import Bot, Update, InlineKeyboardMarkup, InlineKeyboardButton, ChatMember
-from telegram.ext import Job, JobQueue, MessageHandler, Filters, CallbackQueryHandler
+from telegram import (Bot, Update, InlineKeyboardMarkup, InlineKeyboardButton,
+                      ChatMember)
+from telegram.ext import (Job, JobQueue, MessageHandler, Filters,
+                          CallbackQueryHandler)
 
 from bot.config import nmaps_chat, mods_chat, roads_chat, english_chat
 from bot.phrases import (
@@ -38,7 +40,8 @@ def welcome(bot: Bot, update: Update, job_queue: JobQueue) -> None:
         job_queue.run_once(
             kick_and_delete_message,
             300,
-            {"user_id": user_id, "msg_id": msg.message_id, "chat_id": nmaps_chat},
+            {"user_id": user_id, "msg_id": msg.message_id,
+             "chat_id": nmaps_chat},
             str(user_id),
         )
     elif update.effective_chat.id == mods_chat:
@@ -67,7 +70,8 @@ def verify_user(bot: Bot, update: Update, job_queue: JobQueue):
     query_user_id = update.callback_query.from_user.id
     jobs = job_queue.get_jobs_by_name(str(update.effective_user.id))
     if not jobs:
-        bot.answer_callback_query(update.callback_query.id, text=BOT_NOT_VERIFIED)
+        bot.answer_callback_query(update.callback_query.id,
+                                  text=BOT_NOT_VERIFIED)
         return
     job = jobs[0]
     data = job.context

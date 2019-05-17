@@ -13,7 +13,8 @@ def send_bookmarks(bot: Bot, update: Update):
         [InlineKeyboardButton(title, url=url) for title, url in row]
         for row in bookmarks
     ]
-    update.message.reply_text(BOT_CHS_LINK, reply_markup=InlineKeyboardMarkup(keyboard))
+    update.message.reply_text(BOT_CHS_LINK,
+                              reply_markup=InlineKeyboardMarkup(keyboard))
     send_instructions(bot, update, True)
 
 

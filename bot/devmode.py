@@ -7,4 +7,5 @@ def enable_dev() -> bool:
 
 
 def get_headers() -> dict:
-    return {"proxy_url": "socks5h://163.172.152.192:1080"} if enable_dev() else None
+    return {"proxy_url": "socks5h://163.172.152.192:1080"} if enable_dev() \
+        else None

@@ -1,5 +1,6 @@
 from pony.orm import count, db_session
-from telegram import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import (ReplyKeyboardMarkup, InlineKeyboardMarkup,
+                      InlineKeyboardButton)
 from telegram.bot import Bot, Update
 from telegram.ext import RegexHandler, CallbackQueryHandler
 
@@ -34,7 +35,8 @@ def admin_menu(bot: Bot, update: Update) -> None:
 @admins_only
 def chats_management(_: Bot, update: Update) -> None:
     update.message.reply_markdown(
-        BOT_CHATS_MANAGE, reply_markup=InlineKeyboardMarkup(get_chats_keyboard(1))
+        BOT_CHATS_MANAGE,
+        reply_markup=InlineKeyboardMarkup(get_chats_keyboard(1))
     )
 
 
@@ -83,21 +85,26 @@ def get_chats_keyboard(page: int):
     footer = []
     if page > 1:
         footer.append(
-            InlineKeyboardButton(BTN_PREV_PAGE, callback_data=f"chats_{page - 1}")
+            InlineKeyboardButton(BTN_PREV_PAGE,
+                                 callback_data=f"chats_{page - 1}")
         )
-    footer.append(InlineKeyboardButton(MENU_RETURN, callback_data="admin_return"))
+    footer.append(InlineKeyboardButton(MENU_RETURN,
+                                       callback_data="admin_return"))
     if count(c for c in Chat) > page * 10:
         footer.append(
-            InlineKeyboardButton(BTN_NEXT_PAGE, callback_data=f"chats_{page + 1}")
+            InlineKeyboardButton(BTN_NEXT_PAGE,
+                                 callback_data=f"chats_{page + 1}")
         )
     keyboard.append(footer)
     return keyboard
 
 
 admin_menu_handler = RegexHandler(MENU_ADMIN, admin_menu)
-admin_return_handler = CallbackQueryHandler(admin_menu, pattern=r"admin_return")
+admin_return_handler = CallbackQueryHandler(admin_menu,
+                                            pattern=r"admin_return")
 chats_management_handler = RegexHandler(MENU_CHATS, chats_management)
-chats_page_handler = CallbackQueryHandler(change_chats_page, pattern=r"chats_\d+")
+chats_page_handler = CallbackQueryHandler(change_chats_page,
+                                          pattern=r"chats_\d+")
 chats_subscriptions_handler = CallbackQueryHandler(
     update_chat_subscription, pattern=r"chats_\D+"
 )

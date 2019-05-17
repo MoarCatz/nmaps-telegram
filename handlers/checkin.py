@@ -12,7 +12,8 @@ def checkin(_bot: Bot, update: Update) -> NoReturn:
     is_chat = False if update.effective_chat.type == "private" else True
     track_sub_name(User, update.effective_user.id, update.effective_user.name)
     if is_chat:
-        track_sub_name(Chat, update.effective_chat.id, update.effective_chat.title)
+        track_sub_name(Chat, update.effective_chat.id,
+                       update.effective_chat.title)
 
 
 @db_session

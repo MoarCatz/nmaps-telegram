@@ -25,10 +25,12 @@ def request_feedback(_bot: Bot, update: Update) -> int:
 
 
 def receive_feedback(bot: Bot, update: Update) -> int:
-    update.message.reply_text(BOT_FEEDBACK_SENT_USR, reply_markup=get_keyboard(update))
+    update.message.reply_text(BOT_FEEDBACK_SENT_USR,
+                              reply_markup=get_keyboard(update))
     bot.send_message(
         alexfox,
-        BOT_DELIVER_FEEDBACK.format(update.effective_user.name, update.message.text),
+        BOT_DELIVER_FEEDBACK.format(update.effective_user.name,
+                                    update.message.text),
         parse_mode=ParseMode.MARKDOWN,
     )
     return ConversationHandler.END
@@ -36,6 +38,7 @@ def receive_feedback(bot: Bot, update: Update) -> int:
 
 feedback_handler = ConversationHandler(
     entry_points=[RegexHandler(MENU_FEEDBACK, request_feedback)],
-    states={FEEDBACK_REQUESTED: [RegexHandler(r"^(?!⬅ Вернуться)", receive_feedback)]},
+    states={FEEDBACK_REQUESTED: [RegexHandler(r"^(?!⬅ Вернуться)",
+                                              receive_feedback)]},
     fallbacks=[cancel_handler],
 )

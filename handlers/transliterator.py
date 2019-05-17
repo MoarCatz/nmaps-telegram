@@ -29,7 +29,8 @@ def transliterate(_bot: Bot, update: Update) -> int:
 
 def retrieve_transliteration(_bot: Bot, update: Update) -> int:
     update.message.reply_text(
-        urllib.request.urlopen(transliterator + urllib.parse.quote(update.message.text))
+        urllib.request.urlopen(transliterator +
+                               urllib.parse.quote(update.message.text))
         .read()
         .decode()
         .strip('"')

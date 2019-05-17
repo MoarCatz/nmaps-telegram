@@ -4,7 +4,8 @@ from telegram import Bot, Update, ReplyKeyboardMarkup
 from telegram.ext import ConversationHandler, RegexHandler
 
 from handlers import cancel_handler
-from bot.config import SEARCH_QUERY_REQUESTED, rules_search_url, club_search_url
+from bot.config import (SEARCH_QUERY_REQUESTED, rules_search_url,
+                        club_search_url)
 from bot.helpers import private
 from bot.phrases import (
     MENU_SEARCH_RULES,
@@ -48,9 +49,11 @@ def run_search(bot: Bot, update: Update, user_data: dict) -> int:
 
 def retrieve_search_results(update: Update, in_rules: bool) -> None:
     if in_rules:
-        page = requests.get(rules_search_url + update.message.text.replace(" ", "+"))
+        page = requests.get(rules_search_url +
+                            update.message.text.replace(" ", "+"))
     else:
-        page = requests.get(club_search_url + update.message.text.replace(" ", "+"))
+        page = requests.get(club_search_url +
+                            update.message.text.replace(" ", "+"))
     soup = BeautifulSoup(page.text, "lxml")
     answer = ""
 
@@ -61,15 +64,8 @@ def retrieve_search_results(update: Update, in_rules: bool) -> None:
             title = item.find("div", class_="results__title").text
             link = "https://yandex.ru" + item.attrs["data-document"]
             text = item.find("div", class_="results__text").text
-            answer += (
-                "["
-                + title
-                + "]("
-                + link
-                + ")\n```"
-                + text
-                + "```\n____________________\n"
-            )
+            answer += ("[" + title + "](" + link + ")\n```" + text +
+                       "```\n____________________\n")
     else:
         for item in soup.find_all("a", class_="b-serp-item"):
             title = item.find("h2").text
